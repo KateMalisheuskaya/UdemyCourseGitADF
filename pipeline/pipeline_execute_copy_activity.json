@@ -1,0 +1,79 @@
+{
+	"name": "pipeline_execute_copy_activity",
+	"properties": {
+		"activities": [
+			{
+				"name": "Execute Pipeline",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "pipeline_copy_activity",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "Send an email Success",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "Execute Pipeline",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"url": "https://prod2-30.polandcentral.logic.azure.com:443/workflows/0118ec28a0cf4845840c8a289dc83db2/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=DbwJkTUSudv4CkbcCfxrnomAfnX-gTxWfgE8629DIuQ",
+					"method": "POST",
+					"body": {
+						"value": "{\n\"Title\": \"Data Factory Pipeline Execution Successfully Completed\",\n\"Message\": \"Copy EU sales csv file activity executed successfully\",\n\"DataFactoryName\": \"@{pipeline().DataFactory}\",\n\"PipelineName\" : \"@{pipeline().Pipeline}\",\n\"TriggerName\" : \"@{pipeline().TriggerType}\",\n\"Time\" : \"@{utcnow()}\"\n}",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Send an email Failure",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "Execute Pipeline",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"url": "https://prod2-30.polandcentral.logic.azure.com:443/workflows/0118ec28a0cf4845840c8a289dc83db2/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=DbwJkTUSudv4CkbcCfxrnomAfnX-gTxWfgE8629DIuQ",
+					"method": "POST",
+					"body": {
+						"value": "{\n\"Title\": \"Data Factory Pipeline Execution Failed\",\n\"Message\": \"Copy EU Sales CSV file activity failed\",\n\"DataFactoryName\": \"@{pipeline().DataFactory}\",\n\"PipelineName\" : \"@{pipeline().Pipeline}\",\n\"TriggerName\" : \"@{pipeline().TriggerType}\",\n\"Time\" : \"@{utcnow()}\"\n}",
+						"type": "Expression"
+					}
+				}
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2023-09-22T20:40:24Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

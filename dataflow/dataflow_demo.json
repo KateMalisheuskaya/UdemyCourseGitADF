@@ -1,0 +1,48 @@
+{
+	"name": "dataflow_demo",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "ds_customer_txt",
+						"type": "DatasetReference"
+					},
+					"name": "sourceCustomer"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "ds_customer_result_txt",
+						"type": "DatasetReference"
+					},
+					"name": "sinkCustomer"
+				}
+			],
+			"transformations": [],
+			"scriptLines": [
+				"source(output(",
+				"          customer_id as string,",
+				"          Customerslastname as string,",
+				"          Customersfirstname as string,",
+				"          CustomersCountry as string,",
+				"          Customersage as string,",
+				"          Customersgender as string,",
+				"          Customersemail as string,",
+				"          Customersprofession as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> sourceCustomer",
+				"sourceCustomer sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['ProcessedCustomerData.csv'],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> sinkCustomer"
+			]
+		}
+	}
+}

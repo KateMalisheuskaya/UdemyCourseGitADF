@@ -1,0 +1,112 @@
+{
+	"name": "SCD_Type_1",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"linkedService": {
+						"referenceName": "LS_AzureSqlDatabase_1",
+						"type": "LinkedServiceReference"
+					},
+					"name": "sourceData"
+				},
+				{
+					"linkedService": {
+						"referenceName": "LS_AzureSqlDatabase_2",
+						"type": "LinkedServiceReference"
+					},
+					"name": "destinationData"
+				}
+			],
+			"sinks": [
+				{
+					"linkedService": {
+						"referenceName": "LS_AzureSqlDatabase_2",
+						"type": "LinkedServiceReference"
+					},
+					"name": "sinkData"
+				},
+				{
+					"linkedService": {
+						"referenceName": "LS_AzureSqlDatabase_2",
+						"type": "LinkedServiceReference"
+					},
+					"name": "sinkData2"
+				}
+			],
+			"transformations": [
+				{
+					"name": "ExistsOrNot1"
+				},
+				{
+					"name": "ExistsOrNot2"
+				},
+				{
+					"name": "alterRowData"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          ID as integer,",
+				"          Name as string,",
+				"          Phone as string,",
+				"          Last_m as date",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'table',",
+				"     store: 'sqlserver',",
+				"     schemaName: 'dbo',",
+				"     tableName: 'tbluser',",
+				"     isolationLevel: 'READ_UNCOMMITTED') ~> sourceData",
+				"source(output(",
+				"          ID as integer,",
+				"          Name as string,",
+				"          Phone as string,",
+				"          Last_m as date",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'table',",
+				"     store: 'sqlserver',",
+				"     schemaName: 'dbo',",
+				"     tableName: 'userData',",
+				"     isolationLevel: 'READ_UNCOMMITTED') ~> destinationData",
+				"sourceData, destinationData exists(sourceData@ID == destinationData@ID,",
+				"     negate:true,",
+				"     broadcast: 'auto')~> ExistsOrNot1",
+				"sourceData, destinationData exists(sourceData@ID == destinationData@ID,",
+				"     negate:false,",
+				"     broadcast: 'auto')~> ExistsOrNot2",
+				"ExistsOrNot2 alterRow(updateIf(1==1)) ~> alterRowData",
+				"ExistsOrNot1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'table',",
+				"     store: 'sqlserver',",
+				"     schemaName: 'dbo',",
+				"     tableName: 'userData',",
+				"     insertable: true,",
+				"     updateable: false,",
+				"     deletable: false,",
+				"     upsertable: false,",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> sinkData",
+				"alterRowData sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'table',",
+				"     store: 'sqlserver',",
+				"     schemaName: 'dbo',",
+				"     tableName: 'userData',",
+				"     insertable: true,",
+				"     updateable: false,",
+				"     deletable: false,",
+				"     upsertable: false,",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> sinkData2"
+			]
+		}
+	}
+}

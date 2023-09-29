@@ -1,0 +1,9 @@
+{
+	"name": "DataDactoryInstance",
+	"location": "westeurope",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "c9f519b0-e8a6-47f7-bebf-d01282cc265f",
+		"tenantId": "958fe06e-d1c3-4506-8f22-3b1d4f013a47"
+	}
+}

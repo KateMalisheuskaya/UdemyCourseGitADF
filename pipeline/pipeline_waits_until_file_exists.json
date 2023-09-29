@@ -1,0 +1,110 @@
+{
+	"name": "pipeline_waits_until_file_exists",
+	"properties": {
+		"activities": [
+			{
+				"name": "Until File Exists",
+				"type": "Until",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"expression": {
+						"value": "@variables('FileExists')",
+						"type": "Expression"
+					},
+					"activities": [
+						{
+							"name": "Get Metadata Employees",
+							"type": "GetMetadata",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"dataset": {
+									"referenceName": "ds_Employees_DelimitedText",
+									"type": "DatasetReference"
+								},
+								"fieldList": [
+									"exists"
+								],
+								"storeSettings": {
+									"type": "AzureBlobStorageReadSettings",
+									"recursive": true,
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							}
+						},
+						{
+							"name": "If Condition File Exists",
+							"type": "IfCondition",
+							"dependsOn": [
+								{
+									"activity": "Get Metadata Employees",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
+								"expression": {
+									"value": "@activity('Get Metadata Employees').output.exists",
+									"type": "Expression"
+								},
+								"ifFalseActivities": [
+									{
+										"name": "Wait 20 sec",
+										"type": "Wait",
+										"dependsOn": [],
+										"userProperties": [],
+										"typeProperties": {
+											"waitTimeInSeconds": 20
+										}
+									}
+								],
+								"ifTrueActivities": [
+									{
+										"name": "Set variable FileExists",
+										"type": "SetVariable",
+										"dependsOn": [],
+										"policy": {
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"variableName": "FileExists",
+											"value": true
+										}
+									}
+								]
+							}
+						}
+					],
+					"timeout": "0.12:00:00"
+				}
+			}
+		],
+		"variables": {
+			"FileExists": {
+				"type": "Boolean",
+				"defaultValue": false
+			}
+		},
+		"folder": {
+			"name": "All pipelines ( Sections 1 - 9)/Section 9"
+		},
+		"annotations": [],
+		"lastPublishTime": "2023-09-20T19:28:12Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

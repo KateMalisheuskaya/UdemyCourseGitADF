@@ -1,0 +1,20 @@
+{
+	"name": "DS_AzureSqlTable_Control",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_AzureSqlDatabase_1",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Section 9"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "tblControl"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

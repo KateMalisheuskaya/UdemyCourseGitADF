@@ -1,0 +1,38 @@
+{
+	"name": "DS_AzureSqlTable_Output",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_AzureSqlDatabase_2",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Section 9"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "ID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "Name",
+				"type": "varchar"
+			},
+			{
+				"name": "Phone",
+				"type": "varchar"
+			},
+			{
+				"name": "Last_m",
+				"type": "date"
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "userData"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

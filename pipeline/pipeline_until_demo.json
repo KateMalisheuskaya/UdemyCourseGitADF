@@ -1,0 +1,37 @@
+{
+	"name": "pipeline_until_demo",
+	"properties": {
+		"activities": [
+			{
+				"name": "Until Time",
+				"type": "Until",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"expression": {
+						"value": "@greater(utcNow(),'9/20/2023, 1:32:18 PM' )",
+						"type": "Expression"
+					},
+					"activities": [
+						{
+							"name": "Wait 5 seconds",
+							"type": "Wait",
+							"dependsOn": [],
+							"userProperties": [],
+							"typeProperties": {
+								"waitTimeInSeconds": 5
+							}
+						}
+					],
+					"timeout": "0.12:00:00"
+				}
+			}
+		],
+		"folder": {
+			"name": "All pipelines ( Sections 1 - 9)/Section 9"
+		},
+		"annotations": [],
+		"lastPublishTime": "2023-09-20T19:28:11Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}
